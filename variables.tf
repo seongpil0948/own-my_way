@@ -28,14 +28,6 @@ variable "dev_env" {
   }
 }
 
-variable "prefix" {
-  description = "This prefix will be included in the name of most resources."
-  validation {
-    condition     = length(var.prefix) > 2
-    error_message = "The prefix must exceed 2 characters."
-  }
-}
-
 variable "region" {
   description = "The region where the resources are created."
   default     = "ap-northeast-2"
@@ -46,26 +38,41 @@ variable "region" {
   }
 }
 
-variable "names" {
-  type        = list(string)
-  description = "A list of names."
-  default     = ["a", "b", "c"]
-  validation {
-    condition     = length(var.names) > 0
-    error_message = "The names list must not be empty."
-  }
+variable "address_space" {
+  description = "The address space that is used by the virtual network. You can supply more than one address space. Changing this forces a new resource to be created."
+  default     = "10.0.0.0/16"
 }
 
-# variable "aws_instance_type" {
-#   description = "Specifies the AWS instance type."
-#   validation {
-#     condition     = can(regex("t[2-3].micro|t[2-3].small|t[2-3].medium", var.aws_instance_type))
-#     error_message = "The instance type must be either t2.micro, t2.small, t2.medium, t3.micro, t3.small, or t3.medium."
-#   }
-# }
+variable "subnet_prefix" {
+  description = "The address prefix to use for the subnet."
+  default     = "10.0.10.0/24"
+}
 
-# variable "db_password" {
-#   description = "The password for the database."
-#   type        = string
-#   sensitive   = true
-# }
+variable "instance_type" {
+  description = "Specifies the AWS instance type."
+  default     = "t3.micro"
+}
+
+variable "height" {
+  default     = "400"
+  description = "Image height in pixels."
+}
+
+variable "width" {
+  default     = "600"
+  description = "Image width in pixels."
+}
+
+variable "placeholder" {
+  default     = "placekitten.com"
+  description = "Image-as-a-service URL. Some other fun ones to try are fillmurray.com, placecage.com, placebeard.it, loremflickr.com, baconmockup.com, placeimg.com, placebear.com, placeskull.com, stevensegallery.com, placedog.net"
+}
+
+variable "AWS_ACCESS_KEY_ID" {
+  description = "The AWS access key"
+  sensitive   = true
+}
+variable "AWS_SECRET_ACCESS_KEY" {
+  description = "value of the AWS secret key"
+  sensitive   = true
+}
