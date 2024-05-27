@@ -1,9 +1,5 @@
 name: Terraform DEV
 
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
 on:
   push:
     branches:
@@ -25,14 +21,22 @@ jobs:
     # env:
     #   working-directory: terraform
     #   TF_WORKSPACE: my-workspace
+    permissions:
+      # required for all workflows
+      security-events: write
+      # only required for workflows in private repositories
+      actions: read
+      contents: write
+      issues: write
+      pull-requests: write      
     steps:
       # - name: Configure AWS credentials
       #   uses: aws-actions/configure-aws-credentials@v1
       #   with:
       #     aws-region: eu-west-1
 
-      - name: Check out code
-        uses: actions/checkout@v3
+      - name: Checkout repository
+        uses: actions/checkout@v4
         
       - name: Run Terrascan
         id: terrascan
@@ -45,9 +49,13 @@ jobs:
           sarif_upload: true
 
       - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
+          # Path to SARIF file relative to the root of the repository
           sarif_file: terrascan.sarif  
+          # Optional category for the results
+          # Used to differentiate multiple results for one commit
+          category: terraform-analysis-tool          
   Terraform:
     needs: SCAN
     name: Terraform
