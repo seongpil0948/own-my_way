@@ -1,0 +1,55 @@
+name: Terraform DEV Destroy
+
+on:
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: false
+        default: 'debug'
+        type: choice
+        options:
+          - 'debug'
+          - 'info'
+          - 'warn'
+          - 'error'
+
+env:
+  dev_env : development
+  region : ap-northeast-2
+  width : 200
+  height : 100
+  TF_VERSION: 1.8.3          
+
+jobs:
+  Terraform:
+    name: Terraform Destroy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ env.TF_VERSION }}
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -upgrade
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform Destroy
+        run: >
+          terraform destroy -auto-approve
+          -var=dev_env="$dev_env"
+          -var=region="$region"
+          -var=width="$width"
+          -var=height="$height"
+          -var=AWS_ACCESS_KEY_ID=${{secrets.AWS_ACCESS_KEY_ID}}
+          -var=AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}          
+
