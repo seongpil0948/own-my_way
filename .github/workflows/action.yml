@@ -86,8 +86,6 @@ jobs:
       - name: Terraform plan
         id: plan
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           TF_LOG: info
         run: terraform plan -no-color \
           -var=dev_env="$dev_env" \
@@ -95,8 +93,8 @@ jobs:
           -var=placeholder="$placeholder" \
           -var=width="$width" \
           -var=height="$height" \
-          -var=AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
-          -var=AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
+          -var=AWS_ACCESS_KEY_ID=${{secrets.AWS_ACCESS_KEY_ID}} \
+          -var=AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
         # working-directory: ${{ env.working-directory }}
 
 
@@ -131,13 +129,12 @@ jobs:
         id: apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          TF_LOG: debug
         run: terraform apply -auto-approve -input=false \
           -var=dev_env="$dev_env" \
           -var=region="$region" \
           -var=placeholder="$placeholder" \
           -var=width="$width" \
           -var=height="$height" \
-          -var=AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
-          -var=AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
+          -var=AWS_ACCESS_KEY_ID=${{secrets.AWS_ACCESS_KEY_ID}} \
+          -var=AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
